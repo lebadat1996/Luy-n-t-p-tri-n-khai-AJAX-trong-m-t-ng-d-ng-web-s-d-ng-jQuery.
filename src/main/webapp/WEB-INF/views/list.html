@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+<body>
+<table style="border: 1px solid black; margin-left: 560px;margin-top: 100px">
+    <tr>
+        <th>ID</th>
+        <th>Produce</th>
+        <th>Model</th>
+        <th>Price</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    <tr th:each="p:${phone}">
+        <td th:text="${p.id}"></td>
+        <td th:text="${p.producer}"></td>
+        <td th:text="${p.model}"></td>
+        <td th:text="${p.price}"></td>
+        <td><a th:href="@{/smartPhone/edit/{id}(id=${p.id})}">EDIT</a></td>
+        <td><a th:href="@{/smartPhone/delete/{id}(id=${p.id})}">Delete</a></td>
+    </tr>
+</table>
+<script type="text/javascript">
+    $(document).ready(function () {
+        let deleteLink = $("a:contains('Delete')");
+        $(deleteLink).click(function (event) {
+            $.ajax({
+                url: $(event.target).attr("href"),
+                type: "POST",
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                success: function (phones) {
+                    let respContent = "";
+                    let rowToDelete = $(event.target).closest("tr");
+                    rowToDelete.remove();
+                    respContent += "<span class='success'>Smartphone was deleted: [";
+                    respContent += phones.producer + " : ";
+                    respContent += phones.model + " : ";
+                    respContent += phones.price + "]</span>";
+                    $("#sPhoneFromResponse").html(respContent);
+                }
+            });
+            event.preventDefault();
+        });
+    });
+</script>
+</body>
+</html>

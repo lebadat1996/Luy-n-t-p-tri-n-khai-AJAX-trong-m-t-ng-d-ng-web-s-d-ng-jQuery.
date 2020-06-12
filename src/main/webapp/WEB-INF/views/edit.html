@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+<body>
+<div id="container">
+    <h1>Edit Smartphone</h1>
+    <div>
+        <p>Here you can edit Smartphone info:</p>
+        <div id="editPhones"></div>
+    </div>
+    <form id="editPhonesSmart" th:object="${phone}">
+        <table>
+            <tbody>
+            <tr>
+                <input type="hidden" id="id">
+            </tr>
+            <tr>
+                <td>Producer:</td>
+                <td>
+                    <select id="producer" th:field="*{producer}">
+                        <option value="NOKIA">Nokia</option>
+                        <option value="IPHONE">iPhone</option>
+                        <option value="HTC">HTC</option>
+                        <option value="SAMSUNG">Samsung</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Model:</td>
+                <td><input th:field="*{model}"/></td>
+            </tr>
+            <tr>
+                <td>Price:</td>
+                <td><input th:field="*{price}"/></td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="Edit"/></td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+    <a th:href="@{/smartPhone/list}">List</a>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        // su kien nao thuc hien ajax
+        $('#editPhonesSmart').submit(function (event) {
+            //lay du lieu
+            let producer = $('#producer').val();
+            let model = $('#model').val();
+            let price = $('#price').val();
+            //chuyen du lieu sang dang jon hoac xml
+            let json = {"producer": producer, "model": model, "price": price};
+            $.ajax({
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Accept", "application/json");
+                    xhr.setRequestHeader("Content-Type", "application/json");
+                },
+                //phuong thuc
+                type: "POST",
+                data: JSON.stringify(json),
+                //ten api
+                uri: "/smartPhone/edit/{id}",
+                //xu ly khi thanh cong
+                success: function (phones) {
+                    let respContent = "";
+                    respContent += "<span class='success'>Smart Phone Edit Success:[";
+                    respContent += phones.producer + ":";
+                    respContent += phones.model + ":";
+                    respContent += phones.price + "]</span>"
+                    // hien thi ket qua
+                    $("editPhones").html(respContent);
+                }
+            });
+            event.preventDefault();
+        })
+
+    })
+</script>
+</body>
+</html>
